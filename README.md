@@ -1,6 +1,3 @@
-# AI-research-decision-agent
-AI-powered multi-step research and decision agent built with n8n, Gemini, HTTP API tools, and Calculator.
-
 # AI Research & Decision Agent
 
 An AI-powered multi-step problem-solving agent built with n8n and Google Gemini.
