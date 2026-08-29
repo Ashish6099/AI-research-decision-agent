@@ -8,15 +8,9 @@ information, and produces a structured decision report.
 
 ---
 
-## 🎯 Assignment
+## 🎯 The Multi-Step Problem Solver**
 
-**AI Automation Intern — 24 Hour Challenge**
-
-### Selected Option
-
-**Option B — The Multi-Step Problem Solver**
-
-The assignment asks for an agent that:
+The task asks for an agent that:
 
 - breaks a complex task into sub-steps
 - uses at least two tools
