@@ -104,3 +104,164 @@ Research & Decision Report.
                     │ Analysis            │
                     │ Recommendation      │
                     └─────────────────────┘
+🧠 Agent Workflow
+
+The agent follows this high-level process:
+
+1. Understand
+
+Understand the user's objective and identify the required information.
+
+2. Decompose
+
+Break the complex question into smaller sub-tasks.
+
+3. Select tools
+
+Determine which available tools are appropriate.
+
+4. Research
+
+Use the HTTP Research Tool when external information is required.
+
+5. Calculate
+
+Use the Calculator whenever numerical calculations are required.
+
+6. Analyze
+
+Combine the returned information and evaluate the relevant options.
+
+7. Recommend
+
+Generate a structured final answer and recommendation.
+
+🛠️ Tools
+Google Gemini Chat Model
+
+Used as the reasoning and language model powering the AI Agent.
+
+HTTP Request Tool
+
+Used as the external research capability.
+
+The prototype currently uses the Wikipedia API through an HTTP
+Request Tool.
+
+The search query can be dynamically provided by the AI Agent.
+
+Calculator
+
+Used for deterministic numerical calculations.
+
+The AI Agent delegates mathematical operations to the Calculator
+instead of relying on mental arithmetic.
+
+🔍 Example Task
+
+Example user request:
+
+I am designing an AI lead management system for a small business.
+Research PostgreSQL, MySQL, and MongoDB and compare their suitability
+for storing structured lead data. A hypothetical SaaS service costs
+$49 per month. Calculate the annual cost. Based on the research and
+calculation, recommend the most suitable database approach for a
+small business and explain why. Use the available tools.
+
+This requires multiple sub-tasks:
+
+research PostgreSQL
+research MySQL
+research MongoDB
+compare the technologies
+calculate $49 × 12
+analyze the results
+provide a recommendation
+🧮 Example Calculation
+Monthly cost = $49
+
+Annual cost = $49 × 12
+
+Annual cost = $588
+
+The Calculator tool performs the calculation.
+
+📊 Final Output
+
+The final response is formatted as a:
+
+Research & Decision Report
+
+It contains:
+
+Objective
+Agent Process
+Research Findings
+Calculations
+Analysis
+Recommendation
+Tools Used
+Limitations
+
+This makes the result easier for a user to understand than raw JSON
+or an unstructured LLM response.
+
+🧠 Tool-Use Trail
+
+The execution can be observed in the n8n execution view.
+
+Example:
+
+User
+ ↓
+Chat Trigger
+ ↓
+AI Agent
+ ├──→ HTTP Research Tool
+ │       ↓
+ │    Research Results
+ │
+ └──→ Calculator
+         ↓
+      Calculation
+ ↓
+AI Agent Analysis
+ ↓
+Final Report
+
+The exact order of tool calls is determined by the AI Agent based on
+the task.
+
+⚠️ Error Handling
+
+The agent is instructed not to fabricate information when a tool fails.
+
+If the research tool fails:
+
+Research Tool
+      ↓
+     Error
+      ↓
+AI Agent detects unavailable information
+      ↓
+Does not fabricate research
+      ↓
+Reports the limitation
+
+If the Calculator fails:
+
+Calculator
+     ↓
+   Error
+     ↓
+AI Agent reports that the calculation could not be completed
+
+The final response identifies limitations when required information
+could not be retrieved.
+
+🔐 Security
+
+No API keys, passwords, tokens, or private credentials are included
+in this repository.
+
+Credentials are configured separately inside n8n.
