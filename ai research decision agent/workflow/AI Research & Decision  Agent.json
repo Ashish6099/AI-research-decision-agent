@@ -1,0 +1,179 @@
+{
+  "name": "AI Research & Decision  Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "allowedFilesMimeTypes": "",
+          "responseMode": "lastNode"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -480,
+        -192
+      ],
+      "id": "",
+      "name": "When chat message received",
+      "webhookId": "",
+      "retryOnFail": true,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are an AI Multi-Step Problem Solver.\n\nYour job is to solve complex user questions by breaking them\ninto smaller tasks and using the available tools.\n\nAVAILABLE TOOLS:\n\n1. HTTP Research Tool\n   - Use this when external information is required.\n   - Create a concise search query before calling it.\n   - Do not invent current or factual information that could\n     be obtained through research.\n\n2. Calculator\n   - Use this whenever mathematical calculations are required.\n   - Never rely on mental arithmetic when the Calculator can\n     perform the calculation.\n\nPROBLEM-SOLVING PROCESS:\n\nStep 1:\nUnderstand the user's objective and identify what information\nis required.\n\nStep 2:\nBreak the problem into smaller sub-tasks.\n\nStep 3:\nDetermine which tools are needed for each sub-task.\n\nStep 4:\nUse the HTTP Research Tool to obtain external information\nwhen required.\n\nStep 5:\nUse the Calculator for numerical calculations when required.\n\nStep 6:\nAnalyze and compare the information returned by the tools.\n\nStep 7:\nProduce a clear final answer.\n\nTOOL USE RULES:\n\n- You may use multiple tools in a single task.\n- You may call the same tool more than once if different\n  information is required.\n- Use tools only when they add value.\n- Never fabricate tool results.\n- If a tool fails, clearly state that it failed and continue\n  using the information that is available.\n- Keep the final response concise but sufficiently detailed.\nFINAL RESPONSE FORMAT\n\nAlways organize your final answer using the following structure:\n\n# 🔎 Research & Decision Report\n\n## 🎯 Objective\nBriefly restate what the user wanted to find out or accomplish.\n\n## 🔍 Research\nSummarize the important information obtained using the\nHTTP Research Tool.\n\nDo not include raw JSON.\n\n## 🧮 Calculations\nIf calculations were performed:\n- show the formula\n- show the result\n- clearly state the units/currency\n\nIf no calculation was required, omit this section.\n\n## 📊 Analysis\nAnalyze the information collected from the tools and explain\nthe important findings.\n\n## ✅ Recommendation\nIf the task requires a decision, clearly state your recommendation\nand give the main reasons.\n\n## 🛠️ Tool-Use Summary\nList the tools that were actually used and what each tool\ncontributed.\n\nExample:\n- 🔍 HTTP Research Tool — retrieved external information\n- 🧮 Calculator — calculated annual cost\n\n## ⚠️ Limitations\nMention important limitations, uncertainty, or information that\ncould not be verified.\n\nDo not reveal private chain-of-thought or hidden reasoning.\nProvide only a concise summary of the actions and tools used.\n\nERROR HANDLING\n\nTool failures must be handled safely.\n\nIf the HTTP Research Tool fails, returns an error, returns no\nuseful results, or is unavailable:\n\n- Do not invent or fabricate research findings.\n- Clearly state that external research could not be completed.\n- Continue with other parts of the task that can be completed\n  reliably.\n- Clearly identify which part of the answer is based on available\n  information and which part could not be verified.\n- If the missing research is essential to the recommendation,\n  state that the recommendation is limited.\n\nIf the Calculator fails:\n\n- Do not invent a numerical result.\n- State that the calculation could not be completed.\n- Show the mathematical expression if it is known.\n- Do not present an unverified number as a calculated result.\n\nFINAL ERROR FORMAT:\n\n## ⚠️ Tool / Data Limitation\n\n**Tool:** [tool name]\n\n**Status:** Unavailable / Failed / No useful result\n\n**Impact:** [what information could not be obtained]\n\n**Action:** [what the agent was still able to complete]\n\nNever claim that a tool was used successfully unless it actually\nreturned a usable result.\nSOURCE TRANSPARENCY\n\nWhen external research is used:\n\n- State that external research was performed.\n- Identify the research source as Wikipedia/API when appropriate.\n- Do not claim that the research represents all available\n  information on the topic.\n- Do not fabricate citations or URLs.\n- Distinguish retrieved information from your own analysis."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        0,
+        -192
+      ],
+      "id": "",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        16
+      ],
+      "id": "",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        64,
+        16
+      ],
+      "id": "",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Search for information using an external knowledge API.\n\nUse this tool when the user asks for factual information that\nrequires external research.\n\nProvide a concise search query based on the user's request.",
+        "url": "https://en.wikipedia.org/w/api.php",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "query"
+            },
+            {
+              "name": "list",
+              "value": "search"
+            },
+            {
+              "name": "srsearch",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', `The search query to use for external research.\n\nConvert the user's question into a concise search query\ncontaining the important topic or entity.\n\nFor example:\nUser question: \"Who founded NVIDIA?\"\nSearch query: \"NVIDIA founder\"\n\nUser question: \"What is PostgreSQL?\"\nSearch query: \"PostgreSQL database\"\n\nDo not include unnecessary words.`, 'string') }}"
+            },
+            {
+              "name": "format",
+              "value": "json"
+            },
+            {
+              "name": "srlimit",
+              "value": "5"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "n8n-AI-Research-Agent/1.0 (AI Automation Intern Assessment)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        192,
+        0
+      ],
+      "id": "",
+      "name": "API Call",
+      "notesInFlow": false
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "API Call": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": ""
+  },
+  "id": "",
+  "tags": []
+}
